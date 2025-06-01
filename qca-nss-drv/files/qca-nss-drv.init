@@ -108,7 +108,10 @@ enable_rps() {
   set_affinity "nss_empty_buf_sos"          3 2
 
   # USB 3.0 : pin to 3rd core
-  set_affinity "xhci-hcd:usb1"            1,3 1
+  for usb in $(awk '{print $NF}' /proc/interrupts | grep -o 'xhci-hcd:usb[0-9]\+'); do
+    set_affinity "$usb"                   1,3 1
+  done
+
 
   # TCL Completion, REO Dest, ERR, Exception and h2rxdma
   # are offloaded, so balance remaining IRQs accordingly.
